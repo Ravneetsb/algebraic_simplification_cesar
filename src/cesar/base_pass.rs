@@ -29,7 +29,7 @@ pub trait BasePass {
     }
 
 
-    fn simplify(problem: String, assumptions: String, has_node_limit: bool, timeout_multiplier: u64) -> String {
+    fn simplify(problem: String, assumptions: String, has_node_limit: bool, timeout: u64) -> String {
         unsafe {ASSUMPTIONS = assumptions};
         
         // Parse the problem, the assumptions, and the rules.
@@ -38,7 +38,7 @@ pub trait BasePass {
 
         // Run the rules
         let mut runner = Self::get_runner(has_node_limit)
-            .with_time_limit(std::time::Duration::from_secs(config::TIMEOUT * timeout_multiplier))
+            .with_time_limit(std::time::Duration::from_secs(timeout))
             .with_explanations_enabled()
             .with_expr(&problem).run(&rules);
         

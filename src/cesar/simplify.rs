@@ -16,11 +16,11 @@ use crate::cesar::z3utils;
 
 pub fn simplify(expr: String, assumptions: String) {
     
-    let result1 = Pass1::simplify(expr, assumptions.clone(), false, 1);
-    let result2 = Pass2::simplify(result1, assumptions.clone(), true, 1);
-    let result3 = Pass3::simplify(result2, assumptions.clone(), false, 1);
-    let result4 = Pass4::simplify(result3, assumptions.clone(), true, 0);
-    let result5 = Pass5::simplify(result4, assumptions.clone(), false, 1);
+    let result1 = Pass1::simplify(expr, assumptions.clone(), false, config::TIMEOUT);
+    let result2 = Pass2::simplify(result1, assumptions.clone(), true, config::TIMEOUT);
+    let result3 = Pass3::simplify(result2, assumptions.clone(), false, config::TIMEOUT);
+    let result4 = Pass4::simplify(result3, assumptions.clone(), true, config::SHORT_TIMEOUT);
+    let result5 = Pass5::simplify(result4, assumptions.clone(), false, config::TIMEOUT);
 
     println!("{}", result5);
 }
@@ -53,38 +53,38 @@ fn store_if_equiv(old_expr: String, assumptions: String, has_node_limit: bool, t
 pub fn aggressive_simplify(expr: String, assumptions: String) -> String{
 
     let result1 = store_if_equiv(expr.clone(),
-        assumptions.clone(), false, 1, Pass1::simplify);
+        assumptions.clone(), false, config::TIMEOUT, Pass1::simplify);
 
     let result2 = store_if_equiv(result1.clone(),
-        assumptions.clone(), true, 1, Pass2::simplify);
+        assumptions.clone(), true, config::TIMEOUT, Pass2::simplify);
         
     let result3 = store_if_equiv(result2.clone(),
-        assumptions.clone(), true, 1, Pass3::simplify);
+        assumptions.clone(), true, config::TIMEOUT, Pass3::simplify);
     
     let result4 = store_if_equiv(result3.clone(),
-        assumptions.clone(), true, 1, Pass4::simplify); // Disabled for now.
+        assumptions.clone(), true, config::SHORT_TIMEOUT, Pass4::simplify); 
     
     let result5 = store_if_equiv(result4.clone(),
-        assumptions.clone(), false, 1, Pass5::simplify);
+        assumptions.clone(), false, config::TIMEOUT, Pass5::simplify);
 
     let result6 = store_if_equiv(result5.clone(),
-        assumptions.clone(), true, 3, Pass6::simplify);
+        assumptions.clone(), true, config::LONG_TIMEOUT, Pass6::simplify);
 
     let result7 = store_if_equiv(result6.clone(),
-        assumptions.clone(), true, 3,  Pass7::simplify);
+        assumptions.clone(), true, config::LONG_TIMEOUT,  Pass7::simplify);
 
     let result8 = store_if_equiv(result7.clone(),
-        assumptions.clone(), true, 3, Pass8::simplify);
+        assumptions.clone(), true, config::LONG_TIMEOUT, Pass8::simplify);
 
     // Another round of eliminating conjuncts.
     let result6_2 = store_if_equiv(result8.clone(),
-        assumptions.clone(), true, 3, Pass6::simplify);
+        assumptions.clone(), true, config::LONG_TIMEOUT, Pass6::simplify);
 
     let result9 = store_if_equiv(result6_2.clone(),
-        assumptions.clone(), true, 3, Pass9::simplify);
+        assumptions.clone(), true, config::LONG_TIMEOUT, Pass9::simplify);
 
     let result10 = store_if_equiv(result9.clone(),
-        assumptions.clone(), true, 3, Pass10::simplify);
+        assumptions.clone(), true, config::LONG_TIMEOUT, Pass10::simplify);
 
 
     if config::DEBUG {
@@ -99,7 +99,7 @@ pub fn aggressive_simplify(expr: String, assumptions: String) -> String{
 /// A function to clean up bad things like 0<0.
 pub fn light_simplify(expr: String, assumptions: String) {
     
-    let result = Pass5::simplify(expr, assumptions.clone(), false, 1);
+    let result = Pass5::simplify(expr, assumptions.clone(), false, config::TIMEOUT);
 
     println!("{}", result);
 }
