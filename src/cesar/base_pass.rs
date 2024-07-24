@@ -29,8 +29,7 @@ pub trait BasePass {
     }
 
 
-    fn simplify(problem: String, assumptions: String, has_node_limit: bool, timeout_multiplier: u64) -> String {
-        unsafe {ASSUMPTIONS = assumptions};
+    fn simplify(problem: String, has_node_limit: bool, timeout_multiplier: u64) -> String {
         
         // Parse the problem, the assumptions, and the rules.
         let problem = problem.parse().unwrap();
