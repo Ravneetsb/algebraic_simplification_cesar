@@ -4,17 +4,11 @@ use egg::*;
 use log::debug;
 use log::info;
 
-pub static mut ASSUMPTIONS: String = String::new();
-
 pub trait BasePass {
     
-    type StringType;
+    fn get_assumptions(&self) -> &str;
 
-    fn get_assumptions(&self) -> &Self::StringType;
-
-    fn get_mut_assumptions(&mut self) -> &mut Self::StringType;
-
-    fn make_rules() -> Vec<Rewrite<PropLang, ()>>
+    fn make_rules() -> Vec<Rewrite<PropLang, ()>>;
 
     fn get_runner(has_node_limit: bool) -> Runner<PropLang, ()> {
         let mut runner Runner::<PropLang, ()>::default();
@@ -50,7 +44,7 @@ pub trait BasePass {
         debug!("Runner stop reason: {:?}", runner.stop_reason);
 
         let explanation = runner.explain_equivalence(&problem, &simplified.1).get_flat_string();
-        debug!("Explanations: {}, explanation");
+        debug!("Explanations: {}", explanation);
         debug!("End of Pass debug info");
 
 };
