@@ -4,6 +4,8 @@ use egg::*;
 use log::debug;
 use log::info;
 
+pub static mut ASSUMPTIONS: String = String::new();
+
 pub trait BasePass {
     
     fn get_assumptions(&self) -> &str;
@@ -11,7 +13,7 @@ pub trait BasePass {
     fn make_rules() -> Vec<Rewrite<PropLang, ()>>;
 
     fn get_runner(has_node_limit: bool) -> Runner<PropLang, ()> {
-        let mut runner Runner::<PropLang, ()>::default();
+        let runner =  Runner::<PropLang, ()>::default();
 
         if has_node_limit {
             runner
@@ -23,7 +25,7 @@ pub trait BasePass {
     }
 
     fn simplify(problem: String, assumptions: String, has_node_limit: bool, timeout: u64) -> String {
-        debug("Running simplify with {0}", has_node_limit);
+        debug!("Running simplify with {0}", has_node_limit);
         unsafe { ASSUMPTIONS = assumptions };
         
         let problem = problem.parse().unwrap();
@@ -47,4 +49,7 @@ pub trait BasePass {
         debug!("Explanations: {}", explanation);
         debug!("End of Pass debug info");
 
-};
+        simplified.1.to_string()
+
+    }
+}
