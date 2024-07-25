@@ -12,6 +12,8 @@ use crate::cesar::pass8::Pass8;
 use crate::cesar::pass9::Pass9;
 use crate::cesar::rearrange_pass::RearrangePass;
 use crate::cesar::z3utils;
+use log::info;
+use log::debug;
 
 pub fn simplify(expr: String, assumptions: String) {
     
@@ -43,6 +45,19 @@ fn store_if_equiv(old_expr: String, assumptions: String,
         if config::DEBUG {
             println!("Simplify pass failed.")
         }
+        result = old_expr;
+    }
+    result
+}
+
+fn store_if_equiv_extra(old_expr: String, assumptions: String, has_node_limit: bool, timeout: u64,
+    pass: impl Fn(String, String, bool, u64) -> String) -> String {
+    let mut result = pass(old_expr.clone(), assumptions.clone(), has_node_limit, timeout);
+    debug!("{}", result.clone());
+    
+    // If the result is not equivalent to the original, then return the original.
+    if !check_equiv(old_expr.clone(), result.clone(), assumptions.clone()) {
+        debug!("Simplify pass failed.");
         result = old_expr;
     }
     result
