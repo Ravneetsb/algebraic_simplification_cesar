@@ -1,5 +1,6 @@
 use crate::cesar::language::PropLang;
 use crate::cesar::config;
+use crate::cesar::base;
 use egg::*;
 
 /// A function to clean up bad things like 0<0.
@@ -49,19 +50,6 @@ impl Pass5 {
     pub fn simplify(problem: String, assumptions: String) -> String {
         unsafe { ASSUMPTIONS = assumptions };
 
-        // Parse the problem, the assumptions, and the rules
-        let problem = problem.parse().unwrap();
-        let rules = Pass5::make_rules();
-
-        // Run the rules
-        let runner = Runner::<PropLang, ()>::default()
-        .with_time_limit(std::time::Duration::from_secs(config::TIMEOUT))
-            .with_explanations_enabled().with_expr(&problem).run(&rules);
-
-        // Extract the best expression
-        let extractor = Extractor::new(&runner.egraph, AstSize);
-        let simplified = extractor.find_best(runner.roots[0]);
-
-        simplified.1.to_string()
+        base::simplify(problem, false, config::TIMEOUT, Self::make_rules())
     }
 }

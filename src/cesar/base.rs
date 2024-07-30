@@ -4,34 +4,25 @@ use egg::*;
 use log::debug;
 use log::info;
 
-pub static mut ASSUMPTIONS: String = String::new();
+fn get_runner(has_node_limit: bool) -> Runner<PropLang, ()> {
+    let runner =  Runner::<PropLang, ()>::default();
 
-pub trait BasePass {
-    
-    fn get_assumptions(&self) -> &str;
-
-    fn make_rules() -> Vec<Rewrite<PropLang, ()>>;
-
-    fn get_runner(has_node_limit: bool) -> Runner<PropLang, ()> {
-        let runner =  Runner::<PropLang, ()>::default();
-
-        if has_node_limit {
-            runner
-                .with_node_limit(100_000)
-                .with_iter_limit(100_000)
-        } else {
-            runner
-        }
+    if has_node_limit {
+        runner
+            .with_node_limit(100_000)
+            .with_iter_limit(100_000)
+    } else {
+        runner
     }
+}
 
-    fn simplify(problem: String, assumptions: String, has_node_limit: bool, timeout: u64) -> String {
+
+pub fn simplify(problem: String, has_node_limit: bool, timeout: u64, rules: Vec<Rewrite<PropLang, ()>>) -> String {
         debug!("Running simplify with {0}", has_node_limit);
-        unsafe { ASSUMPTIONS = assumptions };
         
         let problem = problem.parse().unwrap();
-        let rules = Self::make_rules();
 
-        let mut runner = Self::get_runner(has_node_limit)
+        let mut runner = get_runner(has_node_limit)
             .with_time_limit(std::time::Duration::from_secs(timeout))
             .with_explanations_enabled()
             .with_expr(&problem).run(&rules);
@@ -52,4 +43,4 @@ pub trait BasePass {
         simplified.1.to_string()
 
     }
-}
+

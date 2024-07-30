@@ -1,5 +1,6 @@
 use crate::cesar::{language::PropLang, z3utils};
 use crate::cesar::config;
+use crate::cesar::base;
 use egg::*;
 
 pub struct Pass1;
@@ -153,31 +154,7 @@ impl Pass1 {
     }
 
     pub fn simplify(problem: String, assumptions: String) -> String {
-        unsafe { ASSUMPTIONS = assumptions };
-
-        // Parse the problem, the assumptions, and the rules
-        let problem = problem.parse().unwrap();
-        let rules = Pass1::make_rules();
-
-        // Run the rules
-        let runner = Runner::<PropLang, ()>::default()
-        .with_time_limit(std::time::Duration::from_secs(config::TIMEOUT))
-            .with_explanations_enabled().with_expr(&problem).run(&rules);
-
-        // Extract the best expression
-        let extractor = Extractor::new(&runner.egraph, AstSize);
-        let simplified = extractor.find_best(runner.roots[0]);
-
-        // Explain the equivalences
-        // let explanation = runner.explain_equivalence(&problem, &simplified.1).get_flat_string();
-
-        // Print the original problem, the assumptions, the simplified problem,
-        // its cost, and the explanations
-        // println!("Original problem: {}", problem);
-        // println!("Simplified problem: {}", simplified.1);
-        // println!("Cost: {}", simplified.0);
-        // println!("Runner stop reason: {:?}", runner.stop_reason);
-        // println!("Explanations: {}", explanation);
-        simplified.1.to_string()
+        unsafe { ASSUMPTIONS = assumptions.clone()};
+        base::simplify(problem, false, config::TIMEOUT, Self::make_rules())
     }
 }

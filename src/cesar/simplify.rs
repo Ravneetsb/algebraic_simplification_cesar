@@ -10,6 +10,7 @@ use crate::cesar::pass6::Pass6;
 use crate::cesar::pass7::Pass7;
 use crate::cesar::pass8::Pass8;
 use crate::cesar::pass9::Pass9;
+use crate::cesar::base;
 use crate::cesar::rearrange_pass::RearrangePass;
 use crate::cesar::z3utils;
 use log::info;
